@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hudson.plugins.nested__view.NestedView>
+  <name>{{ item.name }}</name>
+  <filterExecutors>false</filterExecutors>
+  <filterQueue>false</filterQueue>
+  <properties class="hudson.model.View$PropertyList"/>
+  <views>
+    {% for child_view in item.child_views %}
+    <hudson.model.ListView>
+      <owner class="hudson.plugins.nested_view.NestedView" reference="../../.."/>
+      <name>{{ child_view.name }}</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <includeRegex>{{ child_view.regex }}</includeRegex>
+      <recurse>false</recurse>
+    </hudson.model.ListView>
+    {% endfor %}
+  </views>
+  <columns>
+    <columns/>
+  </columns>
+</hudson.plugins.nested__view.NestedView>

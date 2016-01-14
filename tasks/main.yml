@@ -1,0 +1,57 @@
+---
+# tasks file for ansible-jenkins-views
+
+# https://issues.jenkins-ci.org/browse/JENKINS-8927
+
+
+# Get (Read) a view config
+# curl aharnum:ChangeMe%@localhost:8080/view/All%20Container%20Jobs/config.xml
+
+# Create a new view from an XML file
+# curl -vvv -X POST -d @nested_view.xml -H "Content-Type: text/xml" http://aharnum:ChangeMe%@localhost:8080/createView?name=MyView
+
+#
+
+# Update an existing view from an XML file
+# curl -X POST -d @nested_view.xml -H "Content-Type: text/xml" aharnum:ChangeMe%@localhost:8080/view/Container%20Jobs/config.xml
+
+# Delete an existing view
+# curl -X POST aharnum:ChangeMe%@192.168.88.10:8080/view/MyView/doDelete
+
+
+# ---
+
+# curl aharnum:ChangeMe%@localhost:8080/view/nestedView/config.xml
+
+- name: create directory for view definitions
+  file:
+    state: directory
+    path: "{{ jenkins_view_configs_directory }}"
+
+- name: deploy config template for nested views
+  template:
+    src: nested_view.j2
+    dest: "{{ jenkins_view_configs_directory}}/{{ item.name | urlencode() }}.xml"
+  with_items: "{{ jenkins_nested_views }}"
+
+- name: deploy config template for global views
+  template:
+    src: list_view.j2
+    dest: "{{ jenkins_view_configs_directory}}/{{ item.name | urlencode() }}.xml"
+  with_items: "{{ jenkins_global_views }}"
+
+- name: make sure to delete the old versions of any nested views we're replacing
+  command: "{{ jenkins_delete_view_curl_command }}"
+  with_items: "{{ jenkins_nested_views }}"
+
+- name: create nested views
+  command: "{{ jenkins_upload_view_curl_command }}"
+  with_items: "{{ jenkins_nested_views }}"
+
+- name: make sure to delete the old versions of any global views we're replacing
+  command: "{{ jenkins_delete_view_curl_command }}"
+  with_items: "{{ jenkins_global_views }}"
+
+- name: create global views
+  command: "{{ jenkins_upload_view_curl_command }}"
+  with_items: "{{ jenkins_global_views }}"

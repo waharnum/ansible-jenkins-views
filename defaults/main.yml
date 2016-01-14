@@ -1,0 +1,16 @@
+---
+# defaults file for ansible-jenkins-views
+
+jenkins_view_configs_directory: /var/lib/jenkins/view_configs
+
+jenkins_local_url: 127.0.0.1:8080
+
+jenkins_view_create_user_name: aharnum
+
+jenkins_view_create_user_password: ChangeMe%
+
+jenkins_local_url_with_auth: http://{{ jenkins_view_create_user_name }}:{{ jenkins_view_create_user_password }}@{{ jenkins_local_url }}
+
+jenkins_upload_view_curl_command: "curl -X POST -d @{{ jenkins_view_configs_directory}}/{{ item.name | urlencode() }}.xml -H \"Content-Type: text/xml\" {{ jenkins_local_url_with_auth }}/createView?name={{ item.name | urlencode() }}"
+
+jenkins_delete_view_curl_command: "curl -X POST {{ jenkins_local_url_with_auth }}/view/{{ item.name | urlencode() }}/doDelete"
