@@ -5,12 +5,6 @@ jenkins_view_configs_directory: /var/lib/jenkins/view_configs
 
 jenkins_local_url: 127.0.0.1:8080
 
-# Must prompt for
-# jenkins_user:
-
-# Must prompt for
-# jenkins_password:
-
 jenkins_auth_details: "{{ jenkins_user }}:{{ jenkins_password }}"
 
 jenkins_local_url_with_auth: http://{{ jenkins_auth_details }}@{{ jenkins_local_url }}
@@ -18,3 +12,10 @@ jenkins_local_url_with_auth: http://{{ jenkins_auth_details }}@{{ jenkins_local_
 jenkins_upload_view_curl_command: "curl --fail -X POST -d @{{ jenkins_view_configs_directory}}/{{ item.name | urlencode() }}.xml -H \"Content-Type: text/xml\" {{ jenkins_local_url_with_auth }}/createView?name={{ item.name | urlencode() }}"
 
 jenkins_delete_view_curl_command: "curl -X POST {{ jenkins_local_url_with_auth }}/view/{{ item.name | urlencode() }}/doDelete"
+
+# These will typically needed to be supplied by a prompt or at runtime
+jenkins_user: jenkins
+jenkins_password: jenkins
+
+jenkins_nested_views: []
+jenkins_global_views: []
