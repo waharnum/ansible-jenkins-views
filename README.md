@@ -1,38 +1,79 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Creates and loads basic regex-based view configurations to a Jenkins server.
+
+Covers only the following at the moment:
+- List Views
+- Nested Views (with the Nested Views plugin)
+
+This is pretty much a task-oriented role right now that exists to avoid having to do a lot of manual work managing views.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Jenkins on the server to load the views to
+- a Jenkins username/password that can administer views
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+See defaults/main.yml for what's configurable.
+
+In the current state, you'll likely want to prompt for `jenkins_user` and `jenkins_password` as part of the playbook.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The Jenkins server must have the Nested Views plugin installed if you wish to use Nested Views.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```
+- hosts: jenkins
+  remote_user: vagrant
+  become: yes
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+  vars_prompt:
+    - name: jenkins_user
+      prompt: "Enter Jenkins user name"
+
+    - name: jenkins_password
+      prompt: "Enter Jenkins password"
+      private: yes
+
+  roles:
+    - role: jenkins-views
+      jenkins_nested_views:
+        - name: "Container Jobs"
+          child_views:
+            - name: "Build Containers"
+              regex: ".*build-container.*"
+            - name: "Deploy Containers"
+              regex: ".*deploy-container.*"
+        - name: "Admin Jobs"
+          description: "Administrative jobs for doing administrative things"
+          child_views:
+            - name: "Admin Jobs"
+              regex: ".*admin.*"
+        - name: "Websites"
+          description: "Various website jobs"
+          child_views:
+            - name: "IDRC"
+              description: "idrc.ocad sites"
+              regex: ".*idrc\\.ocad.*"
+            - name: "Floe"
+              regex: ".*floeproject\\.org.*"
+      jenkins_global_views:
+        - name: "All Container Jobs"
+          description: "All container jobs"
+          regex: ".*container.*"
+        - name: "All Non-Container Jobs"
+          regex: "(?!.*container).*"
+```
 
 License
 -------
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+MIT
