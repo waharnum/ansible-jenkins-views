@@ -1,6 +1,7 @@
-{% macro list_view(name, regex, nested=false) -%}
+{% macro list_view(name, regex, nested=false, description='') -%}
 <hudson.model.ListView>
   <name>{{ name }}</name>
+  {% if description %}<description>{{ description }}</description>{% endif %}
   {% if nested %}
   <owner class="hudson.plugins.nested_view.NestedView" reference="../../.."/>
   {% endif %}

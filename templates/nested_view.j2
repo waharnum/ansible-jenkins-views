@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hudson.plugins.nested__view.NestedView>
   <name>{{ item.name }}</name>
+  <description>{{ item.description|default('') }}</description>
   <filterExecutors>false</filterExecutors>
   <filterQueue>false</filterQueue>
   <properties class="hudson.model.View$PropertyList"/>
   <views>
     {% for child_view in item.child_views %}
         {% import '_view_macros.j2' as view_macros with context %}
-        {{ view_macros.list_view(child_view.name, child_view.regex, nested=true) }}
+        {{ view_macros.list_view(child_view.name, child_view.regex, nested=true, description=child_view.description|default('')) }}
     {% endfor %}
   </views>
   <columns>
