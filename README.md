@@ -7,7 +7,7 @@ Covers only the following at the moment:
 - List Views
 - Nested Views (with the Nested Views plugin)
 
-This is pretty much a task-oriented role right now that exists to avoid having to do a lot of manual work managing views.
+This is pretty much a task-oriented role right now that exists to avoid having to do a lot of manual work managing views in our own CI.
 
 Requirements
 ------------
@@ -20,7 +20,7 @@ Role Variables
 
 See defaults/main.yml for what's configurable.
 
-In the current state, you'll likely want to prompt for `jenkins_user` and `jenkins_password` as part of the playbook.
+In the current state, you'll likely want to prompt for `jenkins_user` and `jenkins_password` as part of the playbook (see example playbook below).
 
 Dependencies
 ------------
